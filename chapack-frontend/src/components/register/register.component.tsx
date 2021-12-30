@@ -1,9 +1,15 @@
-import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useContext, useState } from "react";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
+import AuthContext from "../../context/auth.provider";
 import { RegisterCredential } from "../../types/auth.type";
+import axiosApiInstance from "../../utils/axios-instance.util";
 import CustomButton from "../button/custom-button/custom-button.component";
 import FormInput from "../form-input/form-input.component";
-import { ErrorMessage, RegisterContainer } from "./register.styles";
+import { ButtonContainer, ErrorMessage, RegisterContainer } from "./register.styles";
+import Swal from "sweetalert2";
+interface Props {
+  inviter?: string;
+}
 
 const INITIAL_CREDENTIAL = {
   email: "",
@@ -14,12 +20,20 @@ const INITIAL_CREDENTIAL = {
   confirmPassword: "",
 };
 
-const Register = () => {
+const Register: React.FC<Props> = ({ inviter }) => {
   const [credential, setCredential] = useState<RegisterCredential>(INITIAL_CREDENTIAL);
   const [error, setError] = useState<string | null>(null);
   const { token } = useParams();
+  const { logout } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const validatePassword = (): boolean => {
+    if (credential.password.length < 6) {
+      setError("Password must least 6 character");
+      window.scrollTo(0, 0);
+      return false;
+    }
+
     if (credential.password !== credential.confirmPassword) {
       setError("Password not match");
       setCredential((prev) => ({ ...prev, confirmPassword: "" }));
@@ -41,6 +55,33 @@ const Register = () => {
     setError(null);
 
     if (validatePassword()) {
+      axiosApiInstance
+        .post("/api/user/create-with-token", {
+          invite_token: token,
+          email: credential.email,
+          firstName: credential.firstName,
+          lastName: credential.lastName,
+          username: credential.username,
+          password: credential.password,
+        })
+        .then(() => {
+          Swal.fire({
+            position: "center",
+            icon: "success",
+            title: "Sign Up Success",
+            showConfirmButton: false,
+            timer: 1500,
+          }).then(() => {
+            logout();
+            navigate("/login");
+          });
+        })
+        .catch((error) => {
+          if (error.response.status === 409) {
+            setError(`This ${error.response.data.duplicate} is already exists`);
+            window.scrollTo(0, 0);
+          }
+        });
     }
   };
 
@@ -48,7 +89,7 @@ const Register = () => {
     <RegisterContainer>
       <h1>Sign Up</h1>
       <span>
-        Invite by <span className="fw-bolder">Mick</span>
+        Invite by <span className="fw-bolder">{inviter ? inviter : "Unknown"}</span>
       </span>
       <form onSubmit={handleSubmit}>
         <ErrorMessage> {error} </ErrorMessage>
@@ -100,7 +141,9 @@ const Register = () => {
           handleChange={handleChange}
           required
         />
-        <CustomButton type="submit">Sign Up</CustomButton>
+        <ButtonContainer>
+          <CustomButton type="submit">Sign Up</CustomButton>
+        </ButtonContainer>
       </form>
     </RegisterContainer>
   );

@@ -1,5 +1,6 @@
 import { sequelize } from "../utils/sequelize";
 import { DataTypes, Model } from "sequelize";
+import InviteToken from "./invite-token.model";
 
 class User extends Model {
   id!: number;
@@ -25,6 +26,7 @@ User.init(
     },
     email: {
       type: DataTypes.STRING,
+      unique: true,
     },
     password: {
       type: DataTypes.STRING,
@@ -44,5 +46,15 @@ User.init(
     sequelize: sequelize,
   }
 );
+
+User.hasMany(InviteToken, {
+  as: "inviter",
+  foreignKey: "inviter_id",
+});
+
+User.hasMany(InviteToken, {
+  as: "receiver",
+  foreignKey: "receiver_id",
+});
 
 export default User;

@@ -9,4 +9,5 @@ const PASSWORD = process.env.PASSWORD as string;
 export const sequelize = new Sequelize(DATABASE, USERNAME, PASSWORD, {
   host: HOST,
   dialect: "mysql",
+  timezone: "+7:00",
 });

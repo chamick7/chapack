@@ -12,21 +12,27 @@ import { Link } from "react-router-dom";
 import CopyButton from "../../../components/button/copy-button/copy-button.component";
 import { AiOutlineArrowRight } from "react-icons/ai";
 import BeatLoader from "react-spinners/BeatLoader";
+import axiosApiInstance from "../../../utils/axios-instance.util";
 
-const demo =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJtaXh6YW1heCIsImVtYWlsIjoibWl4emFtYXhAZ21haWwuY29tIiwiZmlyc3ROYW1lIjoiU29ycmF3YXQiLCJsYXN0TmFtZSI6IkhheWVlaGF0ZW5nIiwiY3JlYXRlZEF0IjoiMjAxMy0wNy0wNFQwNTowNToxMC4wMDBaIiwidXBkYXRlZEF0IjoiMjAxMy0wNy0wNFQwNTowNToxMC4wMDBaIiwiaWF0IjoxNjQwNzEyNjMwLCJleHAiOjE2NDA3MTMyMzB9.a72bJETKvqY_I0vMzPaDpL4gN607gmsqCeegegszYL4";
+
 var QRCode = require("qrcode.react");
 
 const InvitePage = () => {
-  const [token, setToken] = useState<string>(demo);
+  const [token, setToken] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const inviteURL = `${window.location.origin}/invite/${token}`;
 
   useEffect(() => {
-    setTimeout(()=>{
-      setIsLoading(false)
-    },3000)
-  }, [])
+    axiosApiInstance
+      .post("/api/user/invite-token")
+      .then((response) => {
+        setToken(response.data.token);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
   return (
     <InvitePageContainer>

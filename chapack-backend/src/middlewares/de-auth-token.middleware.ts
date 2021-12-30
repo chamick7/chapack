@@ -4,7 +4,6 @@ import { verifyJwt } from "../utils/jwt.util";
 
 export const deAuthToken = async (req: Request, res: Response, next: NextFunction) => {
   const accessToken = req.headers.authorization?.replace(/^Bearer\s/, "");
-  console.log(req.headers);
 
   if (!accessToken) {
     return res.status(401).send();
@@ -20,7 +19,6 @@ export const deAuthToken = async (req: Request, res: Response, next: NextFunctio
   if (decoded) {
     const user: UserType = decoded as UserType;
     req.user = user;
-    console.log(decoded);
   }
 
   return next();

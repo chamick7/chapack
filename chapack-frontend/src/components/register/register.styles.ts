@@ -16,3 +16,8 @@ export const ErrorMessage = styled.h6`
   margin: 10px 0;
   font-weight: bolder;
 `;
+
+export const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+`;
