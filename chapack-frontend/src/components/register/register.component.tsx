@@ -66,7 +66,6 @@ const Register: React.FC<Props> = ({ inviter }) => {
         })
         .then(() => {
           Swal.fire({
-            position: "center",
             icon: "success",
             title: "Sign Up Success",
             showConfirmButton: false,
