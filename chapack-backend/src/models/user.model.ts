@@ -1,60 +1,61 @@
-import { sequelize } from "../utils/sequelize";
-import { DataTypes, Model } from "sequelize";
+import {
+  Table,
+  Column,
+  Model,
+  CreatedAt,
+  UpdatedAt,
+  PrimaryKey,
+  AutoIncrement,
+  IsEmail,
+  HasMany,
+  Unique,
+  Default,
+  AllowNull,
+} from "sequelize-typescript";
 import InviteToken from "./invite-token.model";
 
+@Table({ tableName: "users" })
 class User extends Model {
+  @PrimaryKey
+  @AutoIncrement
+  @Column
   id!: number;
+
+  @AllowNull(false)
+  @Unique
+  @Column
   username!: string;
+
+  @AllowNull(false)
+  @Unique
+  @IsEmail
+  @Column
   email!: string;
-  password?: string;
+
+  @AllowNull(false)
+  @Column
+  password!: string;
+
+  @AllowNull(false)
+  @Column
   firstName!: string;
+
+  @AllowNull(false)
+  @Column
   lastName!: string;
+
+  @AllowNull(false)
+  @Default("member")
+  @Column
   role!: string;
-  createdAt!: Date;
-  updatedAt!: Date;
+
+  @Column({ field: "created_at" })
+  @CreatedAt
+  createAt!: Date;
+
+  @Column({ field: "updated_at" })
+  @UpdatedAt
+  updatedAt?: Date;
 }
-
-User.init(
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
-      primaryKey: true,
-    },
-    username: {
-      type: DataTypes.STRING,
-    },
-    email: {
-      type: DataTypes.STRING,
-      unique: true,
-    },
-    password: {
-      type: DataTypes.STRING,
-    },
-    firstName: {
-      type: DataTypes.STRING,
-    },
-    lastName: {
-      type: DataTypes.STRING,
-    },
-    role: {
-      type: DataTypes.STRING,
-      defaultValue: "member",
-    },
-  },
-  {
-    sequelize: sequelize,
-  }
-);
-
-User.hasMany(InviteToken, {
-  as: "inviter",
-  foreignKey: "inviter_id",
-});
-
-User.hasMany(InviteToken, {
-  as: "receiver",
-  foreignKey: "receiver_id",
-});
 
 export default User;

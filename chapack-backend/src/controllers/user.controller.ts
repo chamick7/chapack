@@ -17,8 +17,8 @@ export const createInviteToken = (req: Request, res: Response) => {
 
   InviteToken.create({
     token: token,
-    expired_date: dayjs().add(2, "day").toDate(),
-    inviter_id: inviter.id,
+    expiredDate: dayjs().add(2, "day").toDate(),
+    inviterId: inviter.id,
   })
     .then((result) => {
       res.status(201).json({
@@ -75,7 +75,7 @@ export const createUserWithInviteToken = async (req: Request, res: Response) => 
       const inviteToken = await InviteToken.update(
         {
           valid: false,
-          receiver_id: user_created.id,
+          receiverId: user_created.id,
         },
         { where: { token: invite_token } }
       );

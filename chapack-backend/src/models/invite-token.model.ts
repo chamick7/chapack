@@ -1,47 +1,56 @@
-import { sequelize } from "../utils/sequelize";
-import { DataTypes, Model } from "sequelize";
+import {
+  AllowNull,
+  AutoIncrement,
+  BelongsTo,
+  Column,
+  CreatedAt,
+  Default,
+  Model,
+  PrimaryKey,
+  Table,
+  UpdatedAt,
+} from "sequelize-typescript";
 import User from "./user.model";
 
+@Table({ tableName: "invite_tokens" })
 class InviteToken extends Model {
+  @PrimaryKey
+  @AutoIncrement
+  @Column
   id!: number;
-  token!: string;
-  inviter!: User;
-  inviter_id?: number;
-  receiver?: User;
-  receiver_id?: number;
-  expired_date!: Date;
-  valid!: boolean;
-}
 
-InviteToken.init(
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
-      primaryKey: true,
-    },
-    token: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    inviter_id: {
-      type: DataTypes.INTEGER,
-    },
-    receiver_id: {
-      type: DataTypes.INTEGER,
-    },
-    expired_date: {
-      type: DataTypes.DATE,
-      allowNull: false,
-    },
-    valid: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: true,
-    },
-  },
-  {
-    sequelize: sequelize,
-  }
-);
+  @AllowNull(false)
+  @Column
+  token!: string;
+
+  @BelongsTo(() => User, { foreignKey: "inviter_id", targetKey: "id" })
+  inviter!: User;
+  
+  @AllowNull(false)
+  @Column({ field: "inviter_id" })
+  inviterId!: number;
+
+  @BelongsTo(() => User, { foreignKey: "receiver_id", targetKey: "id" })
+  receiver?: User;
+  @Column({ field: "receiver_id" })
+  receiverId?: number;
+
+  @AllowNull(false)
+  @Column({ field: "expired_date" })
+  expiredDate!: Date;
+
+  @AllowNull(false)
+  @Default(true)
+  @Column
+  valid!: boolean;
+
+  @Column({ field: "created_at" })
+  @CreatedAt
+  createAt!: Date;
+
+  @Column({ field: "updated_at" })
+  @UpdatedAt
+  updatedAt?: Date;
+}
 
 export default InviteToken;

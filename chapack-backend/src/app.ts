@@ -10,6 +10,7 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use(cors());
 
+
 const port = process.env.APP_PORT || 4000;
 
 sequelize.sync({ alter: true }).then(() => {
