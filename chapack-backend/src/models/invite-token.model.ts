@@ -24,8 +24,7 @@ class InviteToken extends Model {
   token!: string;
 
   @BelongsTo(() => User, { foreignKey: "inviter_id", targetKey: "id" })
-  inviter!: User;
-  
+  inviter?: User;
   @AllowNull(false)
   @Column({ field: "inviter_id" })
   inviterId!: number;

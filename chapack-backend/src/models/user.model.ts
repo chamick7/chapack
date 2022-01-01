@@ -13,6 +13,7 @@ import {
   AllowNull,
 } from "sequelize-typescript";
 import InviteToken from "./invite-token.model";
+import Package from "./package.model";
 
 @Table({ tableName: "users" })
 class User extends Model {
@@ -22,12 +23,12 @@ class User extends Model {
   id!: number;
 
   @AllowNull(false)
-  @Unique
+  @Unique("username")
   @Column
   username!: string;
 
   @AllowNull(false)
-  @Unique
+  @Unique("email")
   @IsEmail
   @Column
   email!: string;
@@ -48,6 +49,9 @@ class User extends Model {
   @Default("member")
   @Column
   role!: string;
+
+  @HasMany(() => Package, { foreignKey: "orderer_id" })
+  packages?: Package[];
 
   @Column({ field: "created_at" })
   @CreatedAt
